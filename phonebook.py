@@ -79,6 +79,38 @@ class PhoneBook:
 
         return 'error', 'No contact found with this phone number.'
 
+    def edit_contact(self, phone, new_name, new_phone, new_email):
+        if not validate_phone(phone):
+            return 'error', 'Invalid phone number format.'
+
+        phone = phone[-10:]
+
+        for contact in self.contacts:
+            if contact.phone == phone:
+
+                if new_email:
+                    if not validate_email(new_email):
+                        return 'error', 'Invalid email format.'
+
+                if new_phone:
+                    if not validate_phone(new_phone):
+                        return 'error', 'Invalid new phone number format.'
+
+                    new_phone = new_phone[-10:]
+
+                    for other in self.contacts:
+                        if other != contact and other.phone == new_phone:
+                            return 'error', 'Another contact with this phone number already exists.'
+
+                contact.name = new_name if new_name else contact.name
+                contact.email = new_email if new_email else contact.email
+                contact.phone = new_phone if new_phone else contact.phone
+
+                self.save_contacts()
+                return 'success', f'Contact updated: {contact}'
+
+        return 'error', 'No contact found with this phone number.'
+
     def save_contacts(self):
         with open(DATA_FILE, 'w') as file:
             json.dump([contact.to_dict() for contact in self.contacts], file, indent=4)
