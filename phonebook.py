@@ -2,7 +2,7 @@ import json
 import os
 from utils import validate_email, validate_phone
 
-DATA_FILE = "data/contacts.json"
+DATA_FILE = 'data/contacts.json'
 
 class Contact:
     def __init__(self, name, phone, email):
@@ -41,7 +41,14 @@ class PhoneBook:
             data = json.load(file)
             self.contacts = [Contact.from_dict(contact) for contact in data]
 
+    def save_contacts(self):
+        with open(DATA_FILE, 'w') as file:
+            json.dump([contact.to_dict() for contact in self.contacts], file, indent=4)
+
     def add_contact(self, name, phone, email):
+        if not name:
+            return 'error', 'Name cannot be empty.'
+
         if not validate_phone(phone):
             return 'error', 'Invalid phone number format.'
 
@@ -57,27 +64,6 @@ class PhoneBook:
         self.contacts.append(contact)
         self.save_contacts()
         return 'success', f'Contact for {contact.name} added.'
-
-    def list_contacts(self):
-        if not self.contacts:
-            return "No contacts found."
-
-        lines = [f"{index}. {contact}" for index, contact in enumerate(self.contacts, start=1)]
-        return "\n".join(lines)
-
-    def delete_contact(self, phone):
-        if not validate_phone(phone):
-            return 'error', 'Invalid phone number format.'
-
-        phone = phone[-10:]  # normalization
-
-        for contact in self.contacts:
-            if contact.phone == phone:
-                self.contacts.remove(contact)
-                self.save_contacts()
-                return 'success', f"Contact '{contact.name}' deleted."
-
-        return 'error', 'No contact found with this phone number.'
 
     def edit_contact(self, phone, new_name, new_phone, new_email):
         if not validate_phone(phone):
@@ -111,11 +97,28 @@ class PhoneBook:
 
         return 'error', 'No contact found with this phone number.'
 
+    def delete_contact(self, phone):
+        if not validate_phone(phone):
+            return 'error', 'Invalid phone number format.'
+
+        phone = phone[-10:]  # normalization
+
+        for contact in self.contacts:
+            if contact.phone == phone:
+                self.contacts.remove(contact)
+                self.save_contacts()
+                return 'success', f"Contact '{contact.name}' deleted."
+
+        return 'error', 'No contact found with this phone number.'
+
+    def list_contacts(self):
+        if not self.contacts:
+            return "No contacts found."
+
+        lines = [f"{index}. {contact}" for index, contact in enumerate(self.contacts, start=1)]
+        return "\n".join(lines)
+
     def sort_contacts(self, reverse=False):
         self.contacts.sort(key=lambda contact: contact.name, reverse=reverse)
         self.save_contacts()
         return 'success', 'Contacts sorted by name ' + ('(descending)' if reverse else '(ascending)') + '.'
-
-    def save_contacts(self):
-        with open(DATA_FILE, 'w') as file:
-            json.dump([contact.to_dict() for contact in self.contacts], file, indent=4)

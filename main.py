@@ -48,7 +48,13 @@ def main():
                 print_line()
                 print(f'[{status.upper()}] {message}')
             case '5':
-                order = input('Sort order (A)scending / (D)escending: ').strip().lower()
+                while True:
+                    order = input('Sort order (A)scending / (D)escending: ').strip().lower()
+                    if order in ['a', 'd', '']:
+                        break
+                    print_line()
+                    print('[ERROR] Invalid input. Please enter A or D.')
+                    print_line()
                 reverse = True if order == 'd' else False
                 status, message = phonebook.sort_contacts(reverse=reverse)
                 print_line()
