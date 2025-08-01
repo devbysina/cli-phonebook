@@ -10,6 +10,11 @@ class Contact:
         self.phone = phone
         self.email = email
 
+    def __eq__(self, other):
+        if isinstance(other, Contact):
+            return self.phone == other.phone
+        return False
+
     def to_dict(self):
         return {
             'name': self.name,
@@ -32,6 +37,23 @@ class PhoneBook:
         with open(DATA_FILE, 'r') as file:
             data = json.load(file)
             self.contacts = [Contact.from_dict(contact) for contact in data]
+
+    def add_contact(self, name, phone, email):
+        if not validate_phone(phone):
+            return 'error', 'Invalid phone number format.'
+
+        if not validate_email(email):
+            return 'error', 'Invalid email format.'
+
+        phone = phone[-10:]  # normalization
+        contact = Contact(name, phone, email)
+
+        if contact in self.contacts:
+            return 'error', 'Contact with this phone number already exists.'
+
+        self.contacts.append(contact)
+        self.save_contacts()
+        return 'success', f'Contact for {contact.name} added.'
 
     def save_contacts(self):
         with open(DATA_FILE, 'w') as file:
