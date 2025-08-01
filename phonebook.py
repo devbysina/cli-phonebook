@@ -15,6 +15,9 @@ class Contact:
             return self.phone == other.phone
         return False
 
+    def __str__(self):
+        return f'{self.name} - {self.phone} - {self.email}'
+
     def to_dict(self):
         return {
             'name': self.name,
@@ -54,6 +57,13 @@ class PhoneBook:
         self.contacts.append(contact)
         self.save_contacts()
         return 'success', f'Contact for {contact.name} added.'
+
+    def list_contacts(self):
+        if not self.contacts:
+            return "No contacts found."
+
+        lines = [f"{index}. {contact}" for index, contact in enumerate(self.contacts, start=1)]
+        return "\n".join(lines)
 
     def save_contacts(self):
         with open(DATA_FILE, 'w') as file:

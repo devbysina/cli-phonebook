@@ -5,7 +5,7 @@ def main():
     phonebook.load_contacts()
     print('Welcome to CLI Phonebook!')
     while True:
-        print('1. Add a new contact\n2. Exit the phonebook')
+        print('1. Add a new contact\n2. Show all contacts\n3. Exit the phonebook')
         choice = input('Choose: ').strip()
         match choice:
             case '1':
@@ -15,6 +15,8 @@ def main():
                 status, message = phonebook.add_contact(name, phone, email)
                 print(f'[{status.upper()}] {message}')
             case '2':
+                print(phonebook.list_contacts())
+            case '3':
                 break
 
 if __name__ == "__main__":
