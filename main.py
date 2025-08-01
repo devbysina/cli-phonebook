@@ -9,7 +9,8 @@ def main():
         print('2. Show all contacts')
         print('3. Delete a contact')
         print('4. Edit a contact')
-        print('5. Exit the phonebook')
+        print('5. Sort contacts by name (ascending or descending)')
+        print('6. Exit the phonebook')
         choice = input('Choose: ').strip()
         match choice:
             case '1':
@@ -33,7 +34,14 @@ def main():
                 status, message = phonebook.edit_contact(phone, new_name, new_phone, new_email)
                 print(f'[{status.upper()}] {message}')
             case '5':
+                order = input('Sort order (A)scending / (D)escending: ').strip().lower()
+                reverse = True if order == 'd' else False
+                status, message = phonebook.sort_contacts(reverse=reverse)
+                print(f'[{status.upper()}] {message}')
+            case '6':
                 break
+            case _:
+                print('Sorry, we could not recognize your input. Please try again.')
 
 if __name__ == "__main__":
     main()

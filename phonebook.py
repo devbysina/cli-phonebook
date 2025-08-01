@@ -111,6 +111,11 @@ class PhoneBook:
 
         return 'error', 'No contact found with this phone number.'
 
+    def sort_contacts(self, reverse=False):
+        self.contacts.sort(key=lambda contact: contact.name, reverse=reverse)
+        self.save_contacts()
+        return 'success', 'Contacts sorted by name ' + ('(descending)' if reverse else '(ascending)') + '.'
+
     def save_contacts(self):
         with open(DATA_FILE, 'w') as file:
             json.dump([contact.to_dict() for contact in self.contacts], file, indent=4)
