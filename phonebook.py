@@ -65,6 +65,20 @@ class PhoneBook:
         lines = [f"{index}. {contact}" for index, contact in enumerate(self.contacts, start=1)]
         return "\n".join(lines)
 
+    def delete_contact(self, phone):
+        if not validate_phone(phone):
+            return 'error', 'Invalid phone number format.'
+
+        phone = phone[-10:]  # normalization
+
+        for contact in self.contacts:
+            if contact.phone == phone:
+                self.contacts.remove(contact)
+                self.save_contacts()
+                return 'success', f"Contact '{contact.name}' deleted."
+
+        return 'error', 'No contact found with this phone number.'
+
     def save_contacts(self):
         with open(DATA_FILE, 'w') as file:
             json.dump([contact.to_dict() for contact in self.contacts], file, indent=4)
